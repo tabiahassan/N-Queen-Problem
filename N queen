@@ -1,0 +1,114 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+           
+            Console.WriteLine("Enter the no of queens..");
+            int n = int.Parse(Console.ReadLine());
+            Queens q = new Queens(n);
+            q.SetOuputFile(@"C:\\Users\\\Hp\\Desktop\\queen.txt"); 
+            if (q.solve(0))
+                q.display();
+            else
+                Console.WriteLine("no output..");
+            q.saveFile(); // call this to save file
+            Console.ReadLine();
+        }
+    }
+
+
+    class Queens
+    {
+        public int N;
+        public int[,] Board;
+        StreamWriter streamWriter;
+        public Queens(int n)
+        {
+            N = n;
+            Board = new int[N, N];
+        }
+        public bool isSafe(int r, int c)
+        {
+            int i, j;
+            for (i = 0; i < c; i++)
+                if (Board[r, i] == 1)
+                    return false;
+
+
+            for (i = r, j = c; i >= 0 && j >= 0; i--, j--)
+                if (Board[i, j] == 1)
+                    return false;
+
+            for (i = r, j = c; i < N && j >= 0; i++, j--)
+                if (Board[i, j] == 1)
+                    return false;
+
+            return true;
+        }
+        public void 
+        SetOuputFile(string path,string Filename)
+        {
+           this.streamWriter = new StreamWriter(path+Filename);
+           streamWriter.WriteLine("***\tWelcome to N Queen problem!!\t***\n");
+        }
+
+        public void saveFile()
+        {
+            if (this.streamWriter != null)
+                streamWriter.Close();
+        }
+        public bool solve(int c)
+        {
+            if (c >= N)
+                return true;
+            for (int i = 0; i < N; i++)
+            {
+                if (isSafe(i, c))
+                {
+                    
+                    Board[i, c] = 1;
+                    if (solve(c + 1))
+                        return true;
+                    Board[i, c] = 0;
+                }
+            }
+            return false;
+        }
+
+       
+        public void display()
+        {
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < N; j++)
+                    if (Board[i, j] == 1)
+                    {
+                        if(streamWriter!=null)
+                            streamWriter.Write("Q");
+                        Console.Write("Q");
+                    }
+                    else {
+                        if (streamWriter != null)
+                            streamWriter.Write("*");
+                        Console.Write("*");
+                    }
+                if (streamWriter != null)
+                    streamWriter.WriteLine(" ");
+                Console.WriteLine(" ");
+            }
+            if (streamWriter != null)
+                streamWriter.WriteLine();
+            Console.WriteLine();
+        }
+       
+    }
+
+}
